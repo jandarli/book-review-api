@@ -1,14 +1,11 @@
-import { Request, Response, NextFunction } from "express";
-import * as books from './data/books.json'
+import express from 'express';
+import bookRoutes from './routes/bookRoutes';
 
-const express = require('express');
 const app = express(); 
 
 const PORT = 4001;
 
-app.get('/books', (req: Request, res: Response, next: NextFunction) => {
-    res.json(books);
-})
+app.use(bookRoutes);
 
 app.listen(PORT, () => {
     console.log(`Listening on port: ${PORT}`);
