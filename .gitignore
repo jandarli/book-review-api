@@ -1,0 +1,19 @@
+# Node.js dependencies
+node_modules/
+
+# Environment files
+.env
+
+# Editor directories
+.vscode/
+/BookReviewAPI
+
+# Build output
+dist/
+build/
+
+# macOS specific
+.DS_Store
+
+# Others
+npm-debug.log
