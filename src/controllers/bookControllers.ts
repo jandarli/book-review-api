@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import pool from "../../config/database"
+import pool from "../../config/database";
 
 // For fetching books using function
 export const getBooks = async (req: Request, res: Response) => {
@@ -8,8 +8,8 @@ export const getBooks = async (req: Request, res: Response) => {
         const result = await pool.query('SELECT * FROM get_books()');
         res.status(200).json(result.rows);
     } catch (err: any) {
-        console.error("Error executing stored procedure", err.stack);
-        res.status(500).send("Error executing stored procedure");
+        console.error("Error executing function", err.stack);
+        res.status(500).send("Error executing function");
     }
 }
 
