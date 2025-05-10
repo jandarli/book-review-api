@@ -16,10 +16,11 @@ const pool = new Pool({
 pool.connect()
     .then(async () => {
         console.log('Connected to the database');
-        await loadPGSQLFiles();  // Load stored procedures on server start
+        //await loadPGSQLFiles();  // Load stored procedures on server start
     })
     .catch((err: Error) => console.error('Connection error', err.stack));
 
+    /*
 const loadPGSQLFiles = async () => {
     const sqlDir = path.join(__dirname, '../sql');  // Fix path to point to ./sql (relative to the config directory)
     const files = fs.readdirSync(sqlDir);
@@ -35,6 +36,6 @@ const loadPGSQLFiles = async () => {
             }
         }
     }
-};
+}; */
 
 export default pool;
