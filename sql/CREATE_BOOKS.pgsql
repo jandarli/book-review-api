@@ -6,7 +6,8 @@ BEGIN
     id SERIAL PRIMARY KEY,
     title VARCHAR NOT NULL,
     author VARCHAR NOT NULL,
-    year INT
+    year INT,
+    UNIQUE (title, author)
   );
 END;
 $$;

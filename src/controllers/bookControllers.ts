@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import pool from "../config/database";
+import pool from "../../config/database"
 
-// For fetching books using stored procedure
+// For fetching books using function
 export const getBooks = async (req: Request, res: Response) => {
 
     try {
@@ -13,6 +13,7 @@ export const getBooks = async (req: Request, res: Response) => {
     }
 }
 
+// For inserting books using stored procedure
 export const insertBooks = async (req: Request, res: Response) => {
     const { title, author, year } = req.body;
 
@@ -23,6 +24,6 @@ export const insertBooks = async (req: Request, res: Response) => {
         res.status(201).json(added_rows);
     } catch (err: any) {
         console.error("Error executing stored procedure", err.stack);
-        res.status(500).send("Error executing stored procedure");
+        res.status(500).send("Error executing stored procedure. The book is likely already in the table");
     }
 }
