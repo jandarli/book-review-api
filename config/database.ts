@@ -1,7 +1,6 @@
 import { Pool } from 'pg'; 
 import dotenv from 'dotenv';
-import fs from 'fs';
-import path from 'path';
+
 
 dotenv.config();
 
