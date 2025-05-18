@@ -13,7 +13,7 @@ exports.up = (pgm) => {
         CREATE OR REPLACE PROCEDURE insert_book(
         IN author VARCHAR(255),
         IN title VARCHAR(255),
-        IN year INTEGER
+        IN year INT
         )
         LANGUAGE plpgsql
         AS $$
@@ -32,6 +32,6 @@ exports.up = (pgm) => {
  */
 exports.down = (pgm) => {
     pgm.sql(`
-        DROP PROCEDURE IF EXISTS insert_books(VARCHAR, VARCHAR, INTEGER);
+        DROP PROCEDURE IF EXISTS insert_books(VARCHAR, VARCHAR, INT);
         `)
 };
