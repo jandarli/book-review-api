@@ -6,7 +6,6 @@ A REST API using Express.js for managing book reviews, with user authentication 
 ---
 
 ## 2. 🛠 Stack / Tools
-Before you start, make sure you're comfortable with:
 - `express` – server framework
 - `bcrypt` – password hashing
 - `jsonwebtoken` – token-based auth
