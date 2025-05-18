@@ -1,15 +1,34 @@
 import { Request, Response } from 'express';
 import pool from "../../config/database";
 
-// For fetching books using function
+// For fetching all books using function
 export const getBooks = async (req: Request, res: Response) => {
 
     try {
         const result = await pool.query('SELECT * FROM get_books()');
         res.status(200).json(result.rows);
     } catch (err: any) {
-        console.error("Error executing function", err.stack);
-        res.status(500).send("Error executing function");
+        console.error(`Error executing function get_books`, err.stack);
+        res.status(500).send(`Error executing function`);
+    }
+}
+
+// For fetching book by title, author, year 
+export const getBook = async (req: Request, res: Response) => {
+    const {title, author, year} = req.query;
+    console.log(req.query);
+    try {
+        const result = await pool.query('SELECT * FROM get_book($1, $2, $3)', [title, author, year]);
+        
+        if (result && result.rows.length > 0) {
+            res.status(200).json(result.rows);
+        } else {
+            res.status(404).json({ error: `Book not found, attributes: ${title}, ${author}, ${year}`});
+        }
+
+    } catch (err: any) {
+        console.error(`Error executing function get_book`, err.stack);
+        res.status(500).json({error: `Error retrieving book with attributes title: ${title}, author: ${author}, year: ${year}. Please check the server logs for details.`});
     }
 }
 
@@ -23,7 +42,7 @@ export const insertBooks = async (req: Request, res: Response) => {
         const added_rows = result.rows[0];
         res.status(201).json(added_rows);
     } catch (err: any) {
-        console.error("Error executing stored procedure", err.stack);
-        res.status(500).send("Error executing stored procedure. The book is likely already in the table");
+        console.error(`Error executing stored procedure insertBooks`, err.stack);
+        res.status(500).json({error: `Error adding book with attribute title: ${title}, author: ${author}, year: ${year}. Please check the server logs for details.`});
     }
 }
