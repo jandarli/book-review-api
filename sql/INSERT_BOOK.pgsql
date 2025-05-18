@@ -1,7 +1,7 @@
 CREATE OR REPLACE PROCEDURE insert_book(
     IN author VARCHAR(255),
     IN title VARCHAR(255),
-    IN year INTEGER
+    IN year INT
 )
 LANGUAGE plpgsql
 AS $$
