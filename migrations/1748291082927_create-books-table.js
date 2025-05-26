@@ -10,10 +10,6 @@ exports.shorthands = undefined;
  */
 exports.up = (pgm) => {
     pgm.sql(`
-        CREATE OR REPLACE PROCEDURE PROCEDURE()
-        LANGUAGE plpgsql
-        AS $$
-        BEGIN
         CREATE TABLE IF NOT EXISTS books (
             id SERIAL PRIMARY KEY,
             title VARCHAR NOT NULL,
@@ -21,8 +17,6 @@ exports.up = (pgm) => {
             year INT,
             UNIQUE (title, author)
         );
-        END;
-        $$;
         `)
 };
 
@@ -33,6 +27,6 @@ exports.up = (pgm) => {
  */
 exports.down = (pgm) => {
     pgm.sql(`
-        DROP PROCEDURE IF EXISTS create_books_table();
+        DROP TABLE IF EXISTS create_books_table;
         `)
 };
