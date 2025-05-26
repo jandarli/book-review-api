@@ -8,7 +8,8 @@ BEGIN
         username VARCHAR NOT NULL,
         password VARCHAR NOT NULL CHECK (char_length(password) >= 8),,  
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE (email)
+        UNIQUE (email),
+        UNIQUE (username)
     );
 END;
 $$;
