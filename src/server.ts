@@ -10,5 +10,3 @@ app.use('/api', bookRoutes);
 app.listen(PORT, () => {
     console.log(`Listening on port: ${PORT}`);
 })
-
-
