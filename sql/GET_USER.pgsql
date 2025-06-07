@@ -1,13 +1,15 @@
+DROP FUNCTION IF EXISTS get_user(VARCHAR);
+
 CREATE OR REPLACE FUNCTION get_user(
-    IN p_username VARCHAR DEFAULT NULL
+    IN p_username VARCHAR
 )
-RETURNS TABLE(id INT, username VARCHAR, email VARCHAR)
+RETURNS TABLE(id INT, username VARCHAR, email VARCHAR, password VARCHAR)
 LANGUAGE plpgsql
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT users.id, users.username, users.email
+    SELECT users.id, users.username, users.email, users.password
     FROM users
-    WHERE (p_username IS NULL OR users.username ILIKE '%' || p_username || '%');
+    WHERE users.username = p_username;
 END;
 $$;
