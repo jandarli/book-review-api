@@ -43,6 +43,6 @@ export const insertBooks = async (req: Request, res: Response) => {
         res.status(201).json(added_rows);
     } catch (err: any) {
         console.error(`Error executing stored procedure insertBooks`, err.stack);
-        res.status(500).json({error: `Error adding book with attribute title: ${title}, author: ${author}, year: ${year}. Please check the server logs for details.`});
+        res.status(500).json({error: `Error adding book with attributes title: ${title}, author: ${author}, year: ${year}. Please check the server logs for details.`});
     }
 }
