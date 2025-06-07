@@ -17,6 +17,8 @@ A REST API using Express.js for managing book reviews, with user authentication 
 ```
 book-review-api/
 ├── config/
+│    ├── database.ts
+│    └── migrate-config.js
 ├── migrations/
 ├── src/
 │   ├── controllers/
