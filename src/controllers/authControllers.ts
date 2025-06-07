@@ -62,7 +62,7 @@ export const login = async (req: Request, res: Response) => {
 
     } catch (err: any) {
         console.error(`Error executing function get_user`, err.stack);
-        res.status(500).json({ error: `Error getting user with attributes username: ${username}}` });
+        res.status(500).json({ error: `Error getting user with attributes username: ${username}` });
         return;
     }
 
