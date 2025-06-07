@@ -1,3 +1,5 @@
+DROP PROCEDURE IF EXISTS create_users_table();
+
 CREATE OR REPLACE PROCEDURE create_users_table()
 LANGUAGE plpgsql 
 AS $$
@@ -6,7 +8,7 @@ BEGIN
         id SERIAL PRIMARY KEY,
         email VARCHAR NOT NULL,
         username VARCHAR NOT NULL,
-        password VARCHAR NOT NULL CHECK (char_length(password) >= 8),,  
+        password VARCHAR NOT NULL CHECK (char_length(password) >= 8),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         UNIQUE (email),
         UNIQUE (username)

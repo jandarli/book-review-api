@@ -1,7 +1,7 @@
-CREATE OR REPLACE FUNCTION get_book(
+CREATE OR REPLACE FUNCTION get_book (
     IN p_title VARCHAR DEFAULT NULL, 
     IN p_author VARCHAR DEFAULT NULL, 
-    IN p_year INT DEFAULT NULL)
+    IN p_year INT DEFAULT NULL )
 RETURNS TABLE(id INT, title VARCHAR, author VARCHAR, year INT)
 LANGUAGE plpgsql
 AS $$

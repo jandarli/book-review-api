@@ -1,3 +1,5 @@
+DROP PROCEDURE IF EXISTS create_books_table();
+
 CREATE OR REPLACE PROCEDURE create_books_table()
 LANGUAGE plpgsql
 AS $$
