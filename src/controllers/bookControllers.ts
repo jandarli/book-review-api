@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { AuthRequest } from '../middleware/authMiddleware';
 import pool from "../../config/database";
 
 // For fetching all books using function
@@ -33,14 +34,15 @@ export const getBook = async (req: Request, res: Response) => {
 }
 
 // For inserting books using stored procedure
-export const insertBooks = async (req: Request, res: Response) => {
+export const insertBooks = async (req: AuthRequest, res: Response) => {
     const { title, author, year } = req.body;
 
     try {
         const result = await pool.query('CALL insert_book($1, $2, $3)', [author, title, year]);
         
-        const added_rows = result.rows[0];
-        res.status(201).json(added_rows);
+        res.status(201).json({
+            message: "Book added successfully"
+        });
     } catch (err: any) {
         console.error(`Error executing stored procedure insertBooks`, err.stack);
         res.status(500).json({error: `Error adding book with attributes title: ${title}, author: ${author}, year: ${year}. Please check the server logs for details.`});
