@@ -51,18 +51,18 @@ export const login = async (req: Request, res: Response) => {
                 res.status(200).json({ token })
                 return;
             } else {
-                res.status(401).json({ error: `Username and password do not match` })
+                res.status(401).json({ error: `Invalid credentials` })
                 return;
             }
         } else {
-            res.status(404).json({ error: `User not found, attribute: ${username}` });
+            res.status(404).json({ error: `Invalid credentials` });
             return;
         }
 
 
     } catch (err: any) {
         console.error(`Error executing function get_user`, err.stack);
-        res.status(500).json({ error: `Error getting user with attributes username: ${username}` });
+        res.status(500).json({ error: `Invalid credentials` });
         return;
     }
 
