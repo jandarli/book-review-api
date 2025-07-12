@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
+import { z } from 'zod';
 import { AuthRequest } from '../middleware/authMiddleware';
-import pool from "../../config/database";
+import pool from '../../config/database';
 
 // For fetching all books using function
 export const getBooks = async (req: Request, res: Response) => {
@@ -14,22 +15,46 @@ export const getBooks = async (req: Request, res: Response) => {
     }
 }
 
+const searchQueryParamsSchema = z.object({
+    title: z.string().optional(),
+    author: z.string().optional(), 
+    year: z.string().transform(Number).pipe(z.number().int()).optional()
+
+});
+
 // For fetching book by title, author, year 
 export const getBook = async (req: Request, res: Response) => {
-    const {title, author, year} = req.query;
     console.log(req.query);
+
     try {
+        const validatedQueryParams = searchQueryParamsSchema.parse(req.query);
+        const {title, author, year} = validatedQueryParams;
+
         const result = await pool.query('SELECT * FROM get_book($1, $2, $3)', [title, author, year]);
         
         if (result && result.rows.length > 0) {
             res.status(200).json(result.rows);
         } else {
-            res.status(404).json({ error: `Book not found, attributes: ${title}, ${author}, ${year}`});
+            res.status(404).json({ 
+                error: `Book not found, attributes: ${title || 'N/A'}, ${author || 'N/A'}, ${year || 'N/A'}`
+            });
         }
 
     } catch (err: any) {
+        if (err instanceof z.ZodError) {
+            console.error("Zod Validation Error:", err.stack);
+            res.status(400).json({
+                message: "Validation failed for query parameters.",
+                errors: err.issues.map(issue => `${issue.path.join('.')}: ${issue.message}`)
+            });
+            return;
+        }
+
         console.error(`Error executing function get_book`, err.stack);
-        res.status(500).json({error: `Error retrieving book with attributes title: ${title}, author: ${author}, year: ${year}. Please check the server logs for details.`});
+        res.status(500).json({
+            error: `Error retrieving book. Please check the server logs for details.`
+        });
+        return;
     }
 }
 
@@ -45,6 +70,8 @@ export const insertBooks = async (req: AuthRequest, res: Response) => {
         });
     } catch (err: any) {
         console.error(`Error executing stored procedure insertBooks`, err.stack);
-        res.status(500).json({error: `Error adding book with attributes title: ${title}, author: ${author}, year: ${year}. Please check the server logs for details.`});
+        res.status(500).json({
+            error: `Error adding book with attributes title: ${title}, author: ${author}, year: ${year}. Please check the server logs for details.`
+        });
     }
 }
