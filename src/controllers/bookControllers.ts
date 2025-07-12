@@ -12,6 +12,7 @@ export const getBooks = async (req: Request, res: Response) => {
     } catch (err: any) {
         console.error(`Error executing function get_books`, err.stack);
         res.status(500).send(`Error executing function`);
+        return;
     }
 }
 
@@ -58,20 +59,40 @@ export const getBook = async (req: Request, res: Response) => {
     }
 }
 
+
+const insertBodyParamsSchema = z.object({
+    title: z.string().optional(),
+    author: z.string().optional(), 
+    year: z.string().transform(Number).pipe(z.number().int()).optional()
+
+});
+
 // For inserting books using stored procedure
 export const insertBooks = async (req: AuthRequest, res: Response) => {
-    const { title, author, year } = req.body;
-
     try {
-        const result = await pool.query('CALL insert_book($1, $2, $3)', [author, title, year]);
+        const validatedQueryParams = insertBodyParamsSchema.parse(req.body);
+        const {title, author, year} = validatedQueryParams;
+
+        await pool.query('CALL insert_book($1, $2, $3)', [author, title, year]);
         
         res.status(201).json({
             message: "Book added successfully"
         });
+
     } catch (err: any) {
+        if (err instanceof z.ZodError) {
+            console.error("Zod Validation Error:", err.stack);
+            res.status(400).json({
+                message: "Validation failed for query parameters.",
+                errors: err.issues.map(issue => `${issue.path.join('.')}: ${issue.message}`)
+            });
+            return;
+        }
+
         console.error(`Error executing stored procedure insertBooks`, err.stack);
         res.status(500).json({
-            error: `Error adding book with attributes title: ${title}, author: ${author}, year: ${year}. Please check the server logs for details.`
+            error: `Error adding book. Please check the server logs for details.`
         });
+        return;
     }
 }
