@@ -65,10 +65,12 @@ export const login = async (req: Request, res: Response) => {
 
             if (match) {
                 const token = jwt.sign(
-                    { userId: user.id, username: user.username },
+                    { id: user.id, username: user.username, role: user.role},
                     process.env.JWT_SECRET as string,
                     { expiresIn: '1h' }
                 );
+                console.log('Signing token with payload:', { id: user.id, username: user.username, role: user.role });
+
                 res.status(200).json({ "token": token })
                 return;
             } else {
