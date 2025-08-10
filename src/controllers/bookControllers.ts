@@ -60,7 +60,7 @@ export const getBook = async (req: Request, res: Response) => {
 }
 
 
-const insertBodyParamsSchema = z.object({
+const insertBooksBodyParamsSchema = z.object({
     title: z.string().optional(),
     author: z.string().optional(), 
     year: z.string().transform(Number).pipe(z.number().int()).optional()
@@ -70,7 +70,7 @@ const insertBodyParamsSchema = z.object({
 // For inserting books using stored procedure
 export const insertBooks = async (req: AuthRequest, res: Response) => {
     try {
-        const validatedQueryParams = insertBodyParamsSchema.parse(req.body);
+        const validatedQueryParams = insertBooksBodyParamsSchema.parse(req.body);
         const {title, author, year} = validatedQueryParams;
 
         await pool.query('CALL insert_book($1, $2, $3)', [author, title, year]);
@@ -94,5 +94,43 @@ export const insertBooks = async (req: AuthRequest, res: Response) => {
             error: `Error adding book. Please check the server logs for details.`
         });
         return;
+    }
+}
+
+
+const insertReviewParamsSchema = z.object({
+    review_text: z.string().optional(),
+    rating: z.enum(['1', '2', '3', '4', '5'])  
+});
+
+export const insertReview = async (req: AuthRequest, res: Response) => {
+    try {
+        const {bookId} = req.params;
+        const bookIdInt = parseInt(bookId, 10);
+        const username = req.user!.username;
+        const validatedQueryParams = insertReviewParamsSchema.parse(req.body);
+        const {rating, review_text} = validatedQueryParams;
+
+        await pool.query('CALL insert_review($1, $2, $3, $4)', [bookIdInt, username, rating, review_text ?? null]);
+
+        res.status(201).json({
+            message: "Review added successfully"
+        });
+    } catch (err: any) {
+         if (err instanceof z.ZodError) {
+            console.error("Zod Validation Error:", err.stack);
+            res.status(400).json({
+                message: "Validation failed for query parameters.",
+                errors: err.issues.map(issue => `${issue.path.join('.')}: ${issue.message}`)
+            });
+            return;
+        }
+
+        console.error(`Error executing stored procedure insert_review`, err.stack);
+        res.status(500).json({
+            error: `Error adding review. Please check the server logs for details.`
+        });
+        return;
+
     }
 }
