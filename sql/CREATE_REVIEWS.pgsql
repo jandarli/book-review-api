@@ -17,7 +17,8 @@ BEGIN
         rating STAR_RATING NOT NULL,
         book_id INT NOT NULL REFERENCES books(id),
         review_text TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT unique_user_review_per_book UNIQUE (username, book_id)
     ); 
 END; 
 $$;

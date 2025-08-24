@@ -1,0 +1,54 @@
+/**
+ * @type {import('node-pg-migrate').ColumnDefinitions | undefined}
+ */
+exports.shorthands = undefined;
+
+/**
+ * @param pgm {import('node-pg-migrate').MigrationBuilder}
+ * @param run {() => void | undefined}
+ * @returns {Promise<void> | void}
+ */
+exports.up = (pgm) => {
+    pgm.sql(`
+        DROP PROCEDURE IF EXISTS create_reviews_table(); 
+
+        DO $$
+        BEGIN
+            IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'star_rating') THEN
+                CREATE TYPE star_rating AS ENUM ('1', '2', '3', '4', '5');
+            END IF;
+        END$$;
+
+        CREATE OR REPLACE PROCEDURE create_reviews_table()
+        LANGUAGE plpgsql
+        AS $$
+        BEGIN 
+            CREATE TABLE IF NOT EXISTS reviews (
+                review_id SERIAL PRIMARY KEY, 
+                username VARCHAR NOT NULL, 
+                rating STAR_RATING NOT NULL,
+                book_id INT NOT NULL REFERENCES books(id),
+                review_text TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                CONSTRAINT unique_user_review_per_book UNIQUE (username, book_id)
+            ); 
+        END;
+        $$;
+
+        CALL create_reviews_table();  
+        `)
+};
+
+/**
+ * @param pgm {import('node-pg-migrate').MigrationBuilder}
+ * @param run {() => void | undefined}
+ * @returns {Promise<void> | void}
+ */
+exports.down = (pgm) => {
+    pgm.sql(`
+        ALTER TABLE reviews DROP CONSTRAINT IF EXISTS unique_user_review_per_book;
+        DROP PROCEDURE IF EXISTS create_reviews_table();
+        DROP TABLE IF EXISTS reviews;
+        DROP TYPE IF EXISTS star_rating; 
+        `)
+};
