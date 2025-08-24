@@ -8,8 +8,11 @@ CREATE OR REPLACE PROCEDURE insert_review(
 )
 LANGUAGE plpgsql
 AS $$
-BEGIN 
+BEGIN
     INSERT INTO reviews(book_id, username, rating, review_text)
     VALUES (p_book_id, p_username, p_star_rating, p_review_text);
-END; 
+EXCEPTION
+    WHEN unique_violation THEN
+        RAISE EXCEPTION 'User % has already reviewed book with id %', p_username, p_book_id;
+END;
 $$;
