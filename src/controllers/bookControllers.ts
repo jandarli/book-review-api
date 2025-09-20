@@ -12,6 +12,7 @@ export const getBooks = async (req: Request, res: Response) => {
     } catch (err: any) {
         console.error(`Error executing function get_books`, err.stack);
         res.status(500).send(`Error executing function`);
+        
         return;
     }
 }
@@ -88,6 +89,7 @@ export const insertBooks = async (req: AuthRequest, res: Response) => {
                 message: "Validation failed for query parameters.",
                 errors: err.issues.map(issue => `${issue.path.join('.')}: ${issue.message}`)
             });
+
             return;
         }
 
@@ -95,6 +97,7 @@ export const insertBooks = async (req: AuthRequest, res: Response) => {
         res.status(500).json({
             error: `Error adding book. Please check the server logs for details.`
         });
+
         return;
     }
 }
@@ -125,6 +128,7 @@ export const insertReview = async (req: AuthRequest, res: Response) => {
                 message: "Validation failed for query parameters.",
                 errors: err.issues.map(issue => `${issue.path.join('.')}: ${issue.message}`)
             });
+
             return;
         }
 
@@ -132,6 +136,7 @@ export const insertReview = async (req: AuthRequest, res: Response) => {
         res.status(500).json({
             error: `Error adding review. Please check the server logs for details.`
         });
+
         return;
 
     }
