@@ -48,6 +48,7 @@ export const getBook = async (req: Request, res: Response) => {
                 message: "Validation failed for query parameters.",
                 errors: err.issues.map(issue => `${issue.path.join('.')}: ${issue.message}`)
             });
+
             return;
         }
 
@@ -55,6 +56,7 @@ export const getBook = async (req: Request, res: Response) => {
         res.status(500).json({
             error: `Error retrieving book. Please check the server logs for details.`
         });
+
         return;
     }
 }
@@ -132,5 +134,41 @@ export const insertReview = async (req: AuthRequest, res: Response) => {
         });
         return;
 
+    }
+}
+
+
+const reviewsQueryParamsSchema = z.object({
+    title: z.string()
+});
+
+
+export const getReviews = async (req: Request, res: Response) => {
+    console.log(req.query);
+
+    try {
+        const validatedQueryParams = reviewsQueryParamsSchema.parse(req.query); 
+        const {title} = validatedQueryParams; 
+
+        const result = await pool.query('SELECT * FROM get_reviews($1)', [title]); 
+        res.status(200).json(result.rows);
+
+    } catch (err: any ) {
+        if (err instanceof z.ZodError) {
+            console.error("Zod Validation Error: ", err.stack);
+            res.status(400).json({
+                message: "Validation failed for query parameters.", 
+                errors: err.issues.map(issue => `${issue.path.join('.')}: ${issue.message}` )
+            });
+
+            return;
+        }
+
+        console.error(`Error execution function get_reviews`, err.stack);
+        res.status(500).json({
+            error: `Error retrieving reviews for book. Please check server logs for details. `
+        });
+        
+        return; 
     }
 }
